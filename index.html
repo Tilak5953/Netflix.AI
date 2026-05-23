@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Netflix.AI - Premium AI-powered movie & web series recommendation engine. Enter genres or moods to discover top cinema recommendations.">
+  <title>Netflix.AI - AI-Powered Movie & Web Series Recommendations</title>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar" id="navbar">
+      <div class="nav-left">
+        <a href="#" class="logo" id="logo-anchor">Netflix.AI</a>
+        <ul class="nav-links">
+          <li class="nav-item active"><a href="#">Home</a></li>
+          <li class="nav-item"><a href="#trending-movies-title">Movies</a></li>
+          <li class="nav-item"><a href="#trending-tv-title">TV Series</a></li>
+          <li class="nav-item"><a href="#top-rated-title">Trending</a></li>
+        </ul>
+      </div>
+      <div class="nav-right">
+        <!-- API Connection Status Indicator -->
+        <div class="api-status-badge" id="api-badge" title="TMDb API Connection Status">
+          <div class="api-status-dot"></div>
+          <span class="api-status-label">Active (Default API)</span>
+        </div>
+        
+        <!-- API Configurations Toggle Gear -->
+        <button class="icon-btn" id="settings-trigger" onclick="openSettingsModal()" title="API Settings">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero cinematic section -->
+  <section class="hero" id="hero-section">
+    <!-- Cinematic Backdrop overlay -->
+    <div class="hero-background" style="background-image: url('https://image.tmdb.org/t/p/w1280/xJHok70jZZ8JTy2ok76zK6vS26b.jpg');" id="hero-bg"></div>
+    
+    <div class="hero-content">
+      <span class="hero-tag">
+        <i class="fas fa-wand-magic-sparkles"></i> AI Recommendation Engine
+      </span>
+      <h1 class="hero-title" id="hero-main-title">Intelligent Cinema Discoveries Tailored To Your Mood.</h1>
+      <p class="hero-desc">
+        Explore top movies and web series based on how you feel. Type any mood or genre like <em>"mind-bending sci-fi"</em>, <em>"dark thriller"</em>, <em>"suspense"</em>, or <em>"emotional"</em>—our AI maps it instantly.
+      </p>
+
+      <!-- AI Search Box Wrapper -->
+      <div class="search-container">
+        <form class="search-row" id="hero-search-form">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" id="hero-search-input" placeholder="Type a mood (e.g. suspense, mind-blowing, emotional, binge-worthy)..." autocomplete="off" required>
+          </div>
+          <button type="submit" class="search-btn">
+            <i class="fas fa-robot"></i> Find Cinema
+          </button>
+        </form>
+
+        <!-- Search Tag suggestions -->
+        <div class="trending-tags-wrapper">
+          <span class="trending-label">Try Moods:</span>
+          <div class="trending-tags">
+            <button class="tag-btn" data-genre="mind-bending">Mind-bending</button>
+            <button class="tag-btn" data-genre="suspense">Suspense</button>
+            <button class="tag-btn" data-genre="binge-worthy">Binge-worthy</button>
+            <button class="tag-btn" data-genre="dark thriller">Dark Thriller</button>
+            <button class="tag-btn" data-genre="anime">Anime</button>
+            <button class="tag-btn" data-genre="emotional">Emotional</button>
+            <button class="tag-btn" data-genre="motivational">Motivational</button>
+            <button class="tag-btn" data-genre="comedy">Comedy</button>
+            <button class="tag-btn" data-genre="horror">Horror</button>
+            <button class="tag-btn" data-genre="action">Action</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results scroll anchor -->
+  <div id="results-scroll-anchor" style="position: relative; top: -100px;"></div>
+
+  <!-- Recommendations Search Results Section -->
+  <section class="results-section" id="results-section">
+    <div class="section-header-wrapper">
+      <div>
+        <h2 class="section-title" id="results-search-title">AI Suggestions for you</h2>
+        <p class="section-subtitle">Based on your mood query mapping</p>
+      </div>
+      
+      <!-- Movie/TV Series Filter Toggle -->
+      <div class="type-toggle">
+        <button class="toggle-btn active" data-type="all">All</button>
+        <button class="toggle-btn" data-type="movie">Movies</button>
+        <button class="toggle-btn" data-type="tv">Web Series</button>
+      </div>
+    </div>
+
+    <!-- Recommendations Grid (containing dynamic loaders/cards) -->
+    <div class="movie-grid" id="results-grid">
+      <!-- Cards injected by script.js -->
+    </div>
+
+    <!-- Skeleton Load Wrapper -->
+    <div class="spinner-wrapper" id="search-loader" style="display: none;">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">Intelligently querying TMDb...</span>
+    </div>
+  </section>
+
+  <!-- Row 1: Trending Movies Section -->
+  <section class="category-section">
+    <h2 class="section-title" style="margin-left: 10px; margin-bottom: 5px;" id="trending-movies-title">Trending Movies</h2>
+    <p class="section-subtitle" style="margin-left: 10px; margin-bottom: 15px;">Most popular movies on Netflix.AI this week</p>
+    <div class="category-row-wrapper">
+      <button class="slider-arrow left" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+      <div class="category-row" id="trending-movies-row">
+        <!-- Rendered by script.js -->
+      </div>
+      <button class="slider-arrow right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- Row 2: Binge-worthy Series Section -->
+  <section class="category-section">
+    <h2 class="section-title" style="margin-left: 10px; margin-bottom: 5px;" id="trending-tv-title">Binge-worthy Series</h2>
+    <p class="section-subtitle" style="margin-left: 10px; margin-bottom: 15px;">Top rated web series and television shows</p>
+    <div class="category-row-wrapper">
+      <button class="slider-arrow left" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+      <div class="category-row" id="trending-tv-row">
+        <!-- Rendered by script.js -->
+      </div>
+      <button class="slider-arrow right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- Row 3: Top Rated Section -->
+  <section class="category-section">
+    <h2 class="section-title" style="margin-left: 10px; margin-bottom: 5px;" id="top-rated-title">Popular on Netflix.AI</h2>
+    <p class="section-subtitle" style="margin-left: 10px; margin-bottom: 15px;">Critically acclaimed fan favorites</p>
+    <div class="category-row-wrapper">
+      <button class="slider-arrow left" aria-label="Scroll left"><i class="fas fa-chevron-left"></i></button>
+      <div class="category-row" id="top-rated-row">
+        <!-- Rendered by script.js -->
+      </div>
+      <button class="slider-arrow right" aria-label="Scroll right"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </section>
+
+  <!-- Modal Overlay: Watch Trailer -->
+  <div class="modal-overlay" id="trailer-modal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeTrailerModal()" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="video-wrapper">
+        <iframe id="trailer-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay: Media Details -->
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeDetailsModal()" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+      
+      <!-- Backdrop image details header -->
+      <div class="details-header" id="details-modal-header">
+        <div class="details-header-content">
+          <h2 class="details-title" id="details-modal-title">Interstellar</h2>
+          <div class="details-meta-row">
+            <span class="rating" id="details-rating"><i class="fas fa-star"></i> 8.6</span>
+            <span id="details-year">2014</span>
+            <span id="details-runtime">2h 49m</span>
+            <span class="card-badge" id="details-status">Released</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview body details -->
+      <div class="details-body">
+        <div class="details-left">
+          <p class="details-tagline" id="details-tagline">"Mankind was born on Earth. It was never meant to die here."</p>
+          <p class="details-overview" id="details-overview">
+            A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.
+          </p>
+        </div>
+        <div class="details-right">
+          <div class="details-info-group">
+            <span class="details-info-label">Starring</span>
+            <span class="details-info-value" id="details-cast-value">Matthew McConaughey, Anne Hathaway, Jessica Chastain</span>
+          </div>
+          <div class="details-info-group">
+            <span class="details-info-label">Genres</span>
+            <div id="details-genres-value">
+              <span class="genre-badge">Sci-Fi</span>
+              <span class="genre-badge">Drama</span>
+            </div>
+          </div>
+          
+          <button class="btn primary" id="details-play-btn" style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-play"></i> Play Trailer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlay: Settings API Configuration -->
+  <div class="modal-overlay settings-modal" id="settings-modal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeSettingsModal()" aria-label="Close modal">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="settings-body">
+        <div class="settings-title-row">
+          <i class="fas fa-sliders"></i>
+          <h2>Developer Settings</h2>
+        </div>
+        <p class="settings-desc">
+          By default, Netflix.AI uses a shared TMDb API key. If the key expires, or if you'd like to use your own personal account key, input it below.
+        </p>
+
+        <div class="form-group">
+          <label for="api-key-input" class="form-label">TMDb API Key (v3)</label>
+          <div class="form-input-wrapper">
+            <i class="fas fa-key"></i>
+            <input type="password" id="api-key-input" class="form-input" placeholder="Paste your API key here..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="btn secondary" onclick="closeSettingsModal()">Cancel</button>
+          <button class="btn primary" onclick="saveSettings()">Save Configuration</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Banners -->
+  <div class="toast-container" id="toast-container">
+    <!-- Toasts injected dynamically -->
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h2 class="footer-logo">Netflix.AI</h2>
+        <p class="footer-about">
+          Discover your next cinematic experience through advanced AI mood-mapping queries. We search, map, and organize movie and web series data using The Movie Database (TMDb) API.
+        </p>
+        <div class="social-links">
+          <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-group">
+        <h3 class="footer-title">Navigation</h3>
+        <ul class="footer-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#trending-movies-title">Movies</a></li>
+          <li><a href="#trending-tv-title">TV Series</a></li>
+          <li><a href="#top-rated-title">Popular Titles</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-group">
+        <h3 class="footer-title">Help Center</h3>
+        <ul class="footer-links">
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Terms of Use</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">TMDb Documentation</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-group">
+        <h3 class="footer-title">API Source</h3>
+        <p class="footer-about" style="font-size: 0.8rem;">
+          This product uses the TMDb API but is not endorsed or certified by TMDb. All poster images, metadata, and trailers are powered by TMDb.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Netflix.AI. All rights reserved. Created for premium portfolios.</span>
+      <span>Designed with <i class="fas fa-heart" style="color: var(--netflix-red);"></i> in HTML, CSS & JS.</span>
+    </div>
+  </footer>
+
+  <!-- Core Recommendation Script -->
+  <script src="script.js"></script>
+</body>
+</html>
